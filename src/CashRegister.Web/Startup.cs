@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CashRegister.Web.App_Start;
 
 namespace CashRegister.Web
 {
@@ -36,7 +33,7 @@ namespace CashRegister.Web
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -47,6 +44,9 @@ namespace CashRegister.Web
             }
 
             app.UseStaticFiles();
+
+            app.ConfigureAuth(Configuration);
+
             app.UseMvc();
         }
     }

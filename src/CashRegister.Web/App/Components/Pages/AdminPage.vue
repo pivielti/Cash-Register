@@ -1,10 +1,8 @@
 ﻿<template>
-    <h1>Welcome</h1>
+    <h1>Welcome to the administration zone</h1>
 </template>
 
 <script>
-    import 'foundation-sites/dist/css/foundation.css';
-
     module.exports = {
         data: function () {
             return {

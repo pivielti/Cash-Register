@@ -3,8 +3,11 @@
         <li class="menu-text">{{siteTitle}}</li>
         <router-link tag="li" :to="{ name: 'index' }"><a>Home</a></router-link>
         <router-link tag="li" :to="{ name: 'cash-register' }"><a>Cash Register</a></router-link>
-        <!--<li><router-link :to="{ name: 'index' }">Home</router-link></li>
-        <li><router-link :to="{ name: 'cash-register' }">Cash Register</router-link></li>-->
+        <!-- Admin / Logout -->
+        <router-link tag="li" :to="{ name: 'admin-zone' }" v-if="$auth.check()"><a>Admin</a></router-link>
+        <li v-if="$auth.check()"><a v-on:click="$auth.logout()">Logout</a></li>
+        <!-- Login / Register -->
+        <router-link tag="li" :to="{ name: 'login' }" v-if="!$auth.check()"><a>Login</a></router-link>
     </ul>
 </template>
 

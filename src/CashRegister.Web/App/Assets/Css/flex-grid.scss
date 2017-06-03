@@ -1,0 +1,25 @@
+﻿.flex-box {
+    display: flex;
+
+    &.columns {
+        flex-direction: row;
+    }
+
+    &.rows {
+        flex-direction: column;
+    }
+
+    .flex-1,
+    .flex-one
+    {
+        flex: 1;
+    }
+
+    .middle {
+        align-items: center;
+    }
+
+    .content-end {
+        text-align: right;
+    }
+}
