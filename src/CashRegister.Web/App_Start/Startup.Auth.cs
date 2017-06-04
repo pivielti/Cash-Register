@@ -12,12 +12,10 @@ namespace CashRegister.Web.App_Start
     {
         public static void ConfigureAuth(this IApplicationBuilder app, IConfigurationRoot conf)
         {
-            // secretKey contains a secret passphrase only your server knows
             var secretKey = conf.GetSection("TokenAuthentication:SecretKey").Value;
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
             var issuer = conf.GetSection("TokenAuthentication:Issuer").Value;
             var audience = conf.GetSection("TokenAuthentication:Audience").Value;
-            var path = conf.GetSection("TokenAuthentication:TokenPath").Value;
             var expiration = int.Parse(conf.GetSection("TokenAuthentication:Expiration").Value);
 
             var tokenValidationParameters = new TokenValidationParameters {
@@ -37,7 +35,11 @@ namespace CashRegister.Web.App_Start
                 ValidateLifetime = true,
 
                 // If you want to allow a certain amount of clock drift, set that here:
-                ClockSkew = TimeSpan.Zero
+                ClockSkew = TimeSpan.Zero,
+
+                //LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => {
+                //    return true;
+                //}
             };
 
             app.UseJwtBearerAuthentication(new JwtBearerOptions {
@@ -45,17 +47,6 @@ namespace CashRegister.Web.App_Start
                 AutomaticChallenge = true,
                 TokenValidationParameters = tokenValidationParameters
             });
-
-            // Add JWT generation endpoint:
-            var options = new TokenProviderOptions {
-                Path = path,
-                Issuer = issuer,
-                Audience = audience,
-                Expiration = TimeSpan.FromMinutes(expiration),
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
-            };
-
-            app.UseMiddleware<TokenProviderMiddleware>(Options.Create(options));
         }
     }
 }

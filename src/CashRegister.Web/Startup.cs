@@ -26,6 +26,12 @@ namespace CashRegister.Web
         {
             // Add framework services.
             services.AddMvc();
+
+            // Add options
+            services.AddCustomOptions(Configuration);
+
+            // Add custom services.
+            services.AddApplicationServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

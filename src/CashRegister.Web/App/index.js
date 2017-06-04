@@ -1,7 +1,7 @@
 ﻿import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource';
-import Vuex from 'vuex'
+import Vuex from 'vuex';
 import App from './Components/App.vue';
 import Auth from '@websanova/vue-auth';
 import AuthBearer from '@websanova/vue-auth/drivers/auth/bearer.js';
@@ -19,14 +19,17 @@ var router = new VueRouter({
     routes, /*linkActiveClass: 'active',*/
     linkExactActiveClass: 'active'
 });
-Vue.router = router
+Vue.router = router;
 
 // configure authentication
 Vue.use(Auth, {
     auth: AuthBearer,
     http: AuthResource,
     router: AuthRouter,
-    rolesVar: 'type'
+    rolesVar: 'roles',
+    parseUserData: function (data) {
+        return data;
+    }
 });
 
 new Vue({
@@ -35,4 +38,4 @@ new Vue({
     render: function (createElement) {
         return createElement(App);
     }
-})
+});

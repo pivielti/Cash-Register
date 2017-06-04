@@ -27,5 +27,8 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Start\Startup.Services.cs" />
+  </ItemGroup>
 
 </Project>

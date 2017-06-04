@@ -73,7 +73,7 @@ namespace CashRegister.Web.Tools.Authentication
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             var response = new {
-                access_token = encodedJwt,
+                auth_token = encodedJwt,
                 expires_in = (int)_options.Expiration.TotalSeconds
             };
 

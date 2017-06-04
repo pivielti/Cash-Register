@@ -22,18 +22,16 @@
                 formData.append('password', this.pswd);
 
                 this.$auth.login({
-                    url: '/api/token/create',
-                    body: formData,
                     contentType: 'application/x-www-form-urlencoded',
+                    body: formData,
                     success: function () {
-                        console.log('success');
+                        console.log('login success');
                     },
                     error: function () {
-                        console.log('error');
+                        console.log('login error');
                     },
                     rememberMe: true,
                     redirect: '/',
-                    fetchUser: false
                 });
             }
         },
