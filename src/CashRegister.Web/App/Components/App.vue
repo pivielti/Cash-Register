@@ -1,22 +1,22 @@
 ﻿<template>
     <div id="app">
-        <div class="row">
-            <div class="columns large-12">
+        <md-layout md-row>
+            <md-layout md-column>
                 <main-menu site-title="Cash Register"></main-menu>
-            </div>
-        </div>
-        <div class="row">
-            <div class="columns col-md-12">
+            </md-layout>
+        </md-layout>
+        <md-layout md-align="center" md-align-small="start">
+            <md-layout md-flex="80" md-flex-small="100">
                 <transition name="fade">
                     <router-view></router-view>
                 </transition>
-            </div>
-        </div>
+            </md-layout>
+        </md-layout>
     </div>
 </template>
 
 <script>
-    import 'foundation-sites/dist/css/foundation.css';
+    import 'vue-material/dist/vue-material.css';
     import MainMenu from './Menus/MainMenu.vue';
 
     module.exports = {

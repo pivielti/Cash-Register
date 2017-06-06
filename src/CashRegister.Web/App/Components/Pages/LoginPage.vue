@@ -1,10 +1,16 @@
 ﻿<template>
-    <div>
-        <h1>Login page</h1>
-        <input type="text" v-model="login" />
-        <input type="text" v-model="pswd" />
-        <button v-on:click="loginMe" class="button">Login</button>
-    </div>
+    <form @submit.prevent="loginMe">
+        <h1 class="md-display-3">Login page</h1>
+        <md-input-container>
+            <label>Login</label>
+            <md-input type="text" required v-model="login"></md-input>
+        </md-input-container>
+        <md-input-container md-has-password>
+            <label>Password</label>
+            <md-input type="password" required v-model="pswd"></md-input>
+        </md-input-container>
+        <button class="md-raised md-primary">Login</button>
+    </form>
 </template>
 
 <script>
@@ -17,13 +23,11 @@
         },
         methods: {
             loginMe: function () {
-                var formData = new FormData();
-                formData.append('username', this.login);
-                formData.append('password', this.pswd);
-
+                var formDatas = new FormData();
+                formDatas.append("username", this.login);
+                formDatas.append("password", this.pswd);
                 this.$auth.login({
-                    contentType: 'application/x-www-form-urlencoded',
-                    body: formData,
+                    body: formDatas,
                     success: function () {
                         console.log('login success');
                     },

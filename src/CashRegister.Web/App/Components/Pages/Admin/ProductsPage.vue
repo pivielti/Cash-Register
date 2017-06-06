@@ -1,5 +1,8 @@
 ﻿<template>
-    <h1>Welcome to the administration zone</h1>
+    <md-layout>
+        <h1>Products</h1>
+
+    </md-layout>
 </template>
 
 <script>
