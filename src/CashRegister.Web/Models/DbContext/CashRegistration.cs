@@ -18,7 +18,7 @@ namespace CashRegister.Web.Models.DbContext
 
         [Required]
         [Display(Name = "Contenu de la caisse")]
-        public double Cash { get; set; }
+        public decimal Cash { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

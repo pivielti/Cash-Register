@@ -12,14 +12,13 @@ namespace CashRegister.Web.Models.DbContext
         public string Name { get; set; }
 
         [Required]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [Required]
-        public double CostPrice { get; set; }
+        public decimal CostPrice { get; set; }
 
         public int CategoryId { get; set; }
 
-        [Required]
         public virtual Category Category { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

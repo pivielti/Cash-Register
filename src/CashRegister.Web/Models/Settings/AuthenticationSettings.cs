@@ -1,6 +1,6 @@
-﻿namespace CashRegister.Web.Models.Auth
+﻿namespace CashRegister.Web.Models.Settings
 {
-    public class AuthenticationOptions
+    public class AuthenticationSettings
     {
         public string SecretKey { get; set; }
 

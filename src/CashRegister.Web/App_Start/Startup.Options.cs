@@ -1,10 +1,6 @@
-﻿using CashRegister.Web.Models.Auth;
+﻿using CashRegister.Web.Models.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CashRegister.Web.App_Start
 {
@@ -12,7 +8,8 @@ namespace CashRegister.Web.App_Start
     {
         public static void AddCustomOptions(this IServiceCollection services, IConfigurationRoot conf)
         {
-            services.Configure<AuthenticationOptions>(conf.GetSection("TokenAuthentication"));
+            services.Configure<AuthenticationSettings>(conf.GetSection("TokenAuthentication"));
+            services.Configure<OperationSettings>(conf.GetSection("Operations"));
         }
     }
 }

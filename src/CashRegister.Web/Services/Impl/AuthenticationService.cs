@@ -6,14 +6,15 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CashRegister.Web.Services.Helpers;
+using CashRegister.Web.Models.Settings;
 
 namespace CashRegister.Web.Services.Impl
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly AuthenticationOptions _options;
+        private readonly AuthenticationSettings _options;
 
-        public AuthenticationService(IOptions<AuthenticationOptions> options)
+        public AuthenticationService(IOptions<AuthenticationSettings> options)
         {
             _options = options.Value;
         }
