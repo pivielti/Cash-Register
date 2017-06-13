@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using CashRegister.Web.DataAccess;
 using CashRegister.Web.Models.DbContext;
+using System.Threading.Tasks;
 
 namespace CashRegister.Web.Services.Impl
 {
@@ -23,7 +24,7 @@ namespace CashRegister.Web.Services.Impl
             _cashService = cashService;
         }
 
-        public Operation CreateOrUpdate(Operation operation)
+        public async Task<Operation> CreateOrUpdate(Operation operation)
         {
             if (operation.Id <= 0)
             {
@@ -44,7 +45,7 @@ namespace CashRegister.Web.Services.Impl
                 }
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return operation;
         }
@@ -124,12 +125,6 @@ namespace CashRegister.Web.Services.Impl
                     };
                     yield return group;
                 }
-
-                //if (current.Moment.Hour > dayStartHour && current.Moment.Minute > 0 && previous.Moment.Hour < dayStartHour)
-                //{
-                //    group = new OperationGroupViewModel { Date = current.Moment.Date };
-                //    yield return group;
-                //}
 
                 group.Operations.Add(current);
             }

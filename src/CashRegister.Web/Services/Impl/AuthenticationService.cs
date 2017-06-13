@@ -7,21 +7,32 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CashRegister.Web.Services.Helpers;
 using CashRegister.Web.Models.Settings;
+using Microsoft.AspNetCore.Identity;
+using CashRegister.Web.Models.DbContext;
+using System.Threading.Tasks;
 
 namespace CashRegister.Web.Services.Impl
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly AuthenticationSettings _options;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AuthenticationService(IOptions<AuthenticationSettings> options)
+        public AuthenticationService(
+            IOptions<AuthenticationSettings> options,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _options = options.Value;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public bool IsIdentityValid(LoginRequest model)
+        public async Task<Tuple<bool, SignInResult>> IsIdentityValid(LoginRequest model)
         {
-            return model?.UserName == "TEST" && model?.Password == "TEST123";
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
+            return new Tuple<bool, SignInResult>(result.Succeeded, result);
         }
 
         public string CreateToken(string userName)

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using CashRegister.Web.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using CashRegister.Web.DataAccess;
 using CashRegister.Web.Models.DbContext;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CashRegister.Web.Controllers
 {
+    [Produces("application/json")]
     [Route("api/products")]
     public class ProductsController : Controller
     {
@@ -21,17 +18,8 @@ namespace CashRegister.Web.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> GetById(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound();
-            return Ok(product);
-        }
-
         [HttpGet]
-        [Route("")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetProducts()
         {
             var products = await _context.Products
                 .Include(x => x.Category)
@@ -40,15 +28,27 @@ namespace CashRegister.Web.Controllers
             return Ok(products);
         }
 
-        [HttpPost]
-        [Route("")]
-        //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> Create([FromBody]Product product)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduct([FromRoute] int id)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
+
+            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+            if (product == null)
+                return NotFound();
+
+            return Ok(product);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] Product product)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (id != product.Id)
+                return BadRequest();
 
             var category = await _context.Categories.FindAsync(product.CategoryId);
             if (category == null)
@@ -57,32 +57,54 @@ namespace CashRegister.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Add(product);
+            product.Category = category;
+            _context.Entry(product).State = EntityState.Modified;
 
-            await _context.SaveChangesAsync();
-
-            var location = Url.Action(nameof(GetById), new {
-                id = product.Id
-            });
-
-            return Created(location, product);
-        }
-
-        [HttpPut]
-        [Route("")]
-        public async Task<IActionResult> Update(Product product)
-        {
-            var attached = _context.Products.Attach(product);
-            attached.State = EntityState.Modified;
-
-            var result = await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(id))
+                    return NotFound();
+                else
+                    throw;
+            }
 
             return NoContent();
         }
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+
+        [HttpPost]
+        public async Task<IActionResult> PostProduct([FromBody] Product product)
         {
-            var product = await _context.Products.FindAsync(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var category = await _context.Categories.FindAsync(product.CategoryId);
+            if (category == null)
+            {
+                ModelState.AddModelError("", "Unknown category !");
+                return BadRequest(ModelState);
+            }
+
+            product.Category = category;
+            _context.Products.Add(product);
+
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetProduct), new {
+                id = product.Id
+            }, product);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
             if (product == null)
                 return NotFound();
 
@@ -90,7 +112,12 @@ namespace CashRegister.Web.Controllers
 
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(product);
+        }
+
+        private bool ProductExists(int id)
+        {
+            return _context.Products.Any(e => e.Id == id);
         }
     }
 }

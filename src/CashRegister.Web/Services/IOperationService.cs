@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CashRegister.Web.Models;
 using CashRegister.Web.Models.DbContext;
 
@@ -9,7 +10,7 @@ namespace CashRegister.Web.Services
     {
         IEnumerable<OperationGroupModel> GetOperationsByDay(DateTime startDay, DateTime endDay);
 
-        Operation CreateOrUpdate(Operation operation);
+        Task<Operation> CreateOrUpdate(Operation operation);
 
         IEnumerable<Operation> GetDailyOperations();
     }

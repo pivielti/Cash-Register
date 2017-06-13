@@ -5,6 +5,8 @@ using CashRegister.Web.Models.Auth;
 using CashRegister.Web.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CashRegister.Web.Controllers
 {
@@ -15,22 +17,28 @@ namespace CashRegister.Web.Controllers
     {
         private readonly IAuthenticationService _authService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger _logger;
 
-        public AuthController(IAuthenticationService authService, IHttpContextAccessor httpContextAccessor)
+        public AuthController(
+            IAuthenticationService authService,
+            IHttpContextAccessor httpContextAccessor,
+            ILoggerFactory loggerFactory)
         {
             _authService = authService;
             _httpContextAccessor = httpContextAccessor;
+            _logger = loggerFactory.CreateLogger<AuthController>();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public IActionResult Login(LoginRequest model)
+        public async Task<IActionResult> Login(LoginRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_authService.IsIdentityValid(model))
+            var loginResult = await _authService.IsIdentityValid(model);
+            if (!loginResult.Item1)
             {
                 ModelState.AddModelError("", "Invalid username or password!");
                 return BadRequest(ModelState);
@@ -38,7 +46,7 @@ namespace CashRegister.Web.Controllers
 
             var token = _authService.CreateToken(model.UserName);
 
-            // this allo @websanova/vue-auth to catch and register the token
+            // this allows @websanova/vue-auth to catch and register the token
             _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", token);
 
             return NoContent();
