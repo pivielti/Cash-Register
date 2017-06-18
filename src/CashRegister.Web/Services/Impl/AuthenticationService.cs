@@ -7,46 +7,47 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CashRegister.Web.Services.Helpers;
 using CashRegister.Web.Models.Settings;
-using Microsoft.AspNetCore.Identity;
-using CashRegister.Web.Models.DbContext;
-using System.Threading.Tasks;
+using CashRegister.Web.DataAccess;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CashRegister.Web.Services.Impl
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly AuthenticationSettings _options;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-        public AuthenticationService(
-            IOptions<AuthenticationSettings> options,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+        public AuthenticationService(IOptions<AuthenticationSettings> options, ApplicationDbContext context)
         {
             _options = options.Value;
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _context = context;
         }
 
-        public async Task<Tuple<bool, SignInResult>> IsIdentityValid(LoginRequest model)
+        public bool IsIdentityValid(LoginModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
-            return new Tuple<bool, SignInResult>(result.Succeeded, result);
+            var user = _context.Users
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
+                .SingleOrDefault(x => x.Login == model.UserName);
+            if (user == null)
+                return false;
+            var hash = AuthHelper.HashPassword(model.Password, user.HashSalt);
+            return user.PasswordHash == hash;
         }
 
         public string CreateToken(string userName)
         {
             var securityToken = GetNewToken(userName);
-            var encodedToken = JwtHelper.EncodeToken(securityToken);
+            var encodedToken = AuthHelper.EncodeToken(securityToken);
             return encodedToken;
         }
 
         public string UpdateToken(string token)
         {
-            var decodedToken = JwtHelper.DecodeToken(token);
+            var decodedToken = AuthHelper.DecodeToken(token);
             var securityToken = GetNewToken(decodedToken.Subject);
-            var encodedToken = JwtHelper.EncodeToken(securityToken);
+            var encodedToken = AuthHelper.EncodeToken(securityToken);
             return encodedToken;
         }
 

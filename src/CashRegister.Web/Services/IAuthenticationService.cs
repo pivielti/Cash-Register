@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CashRegister.Web.Models.Auth;
-using Microsoft.AspNetCore.Identity;
 
 namespace CashRegister.Web.Services
 {
     public interface IAuthenticationService
     {
-        Task<Tuple<bool, SignInResult>> IsIdentityValid(LoginRequest model);
+        bool IsIdentityValid(LoginModel model);
 
         string CreateToken(string userName);
 

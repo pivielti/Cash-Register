@@ -8,8 +8,7 @@ using CashRegister.Web.App_Start;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using CashRegister.Web.DataAccess;
-using CashRegister.Web.Models.DbContext;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace CashRegister.Web
 {
@@ -35,14 +34,6 @@ namespace CashRegister.Web
                 options.UseSqlite(Configuration.GetConnectionString("SQLite"));
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(x => {
-                x.Password.RequireNonAlphanumeric = false;
-                x.Password.RequireDigit = false;
-                x.Password.RequireUppercase = false;
-                x.Password.RequiredLength = 6;
-            }).AddEntityFrameworkStores<ApplicationDbContext>()
-              .AddDefaultTokenProviders();
-
             // Add framework services.
             services.AddMvc().AddJsonOptions(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -54,8 +45,12 @@ namespace CashRegister.Web
             // Add options
             services.AddCustomOptions(Configuration);
 
+            // Add built-in services
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             // Add custom services.
             services.AddApplicationServices();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,10 +75,6 @@ namespace CashRegister.Web
             app.UseSession(new SessionOptions() {
                 CookieName = "CashRegister_Session"
             });
-
-            app.UseIdentity();
-
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.ConfigureAuth(Configuration);
 

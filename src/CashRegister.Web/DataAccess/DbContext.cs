@@ -1,17 +1,22 @@
 ﻿using CashRegister.Web.Models.DbContext;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CashRegister.Web.Services.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace CashRegister.Web.DataAccess
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
+
+        public DbSet<UserRole> UserRoles { get; set; }
 
         public DbSet<Product> Products { get; set; }
 
@@ -26,36 +31,47 @@ namespace CashRegister.Web.DataAccess
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.Entity<UserRole>()
+            .HasKey(t => new { t.UserId, t.RoleId });
+
+            builder.Entity<UserRole>()
+                .HasOne(pt => pt.User)
+                .WithMany(p => p.UserRoles)
+                .HasForeignKey(pt => pt.UserId);
+
+            builder.Entity<UserRole>()
+                .HasOne(pt => pt.Role)
+                .WithMany(t => t.UserRoles)
+                .HasForeignKey(pt => pt.RoleId);
         }
 
-        public async void CreateAdminAccount(UserManager<ApplicationUser> userMgr, RoleManager<IdentityRole> roleMgr)
+        public async void CreateDefaultAccount()
         {
-            if (!Users.Any(u => u.UserName == "administrator"))
+            if (!Users.Any(u => u.Login == "administrator"))
             {
                 // create admin role
-                var adminRole = await roleMgr.FindByNameAsync("admin");
-                if (adminRole == null)
-                {
-                    adminRole = new IdentityRole("admin");
-                    await roleMgr.CreateAsync(adminRole);
-                }
+                var adminRole = new Role() {
+                    Name = "admin"
+                };
+                Roles.Add(adminRole);
 
                 // create admin user
-                var adminUser = new ApplicationUser() {
-                    UserName = "administrator"
+                var salt = string.Empty;
+                var hash = AuthHelper.HashPassword("password", out salt);
+                var adminUser = new User() {
+                    Login = "administrator",
+                    PasswordHash = hash,
+                    HashSalt = salt
                 };
 
-                // ... with default password
-                var createResult = await userMgr.CreateAsync(adminUser, "password");
+                // link user and role
+                UserRoles.Add(new UserRole {
+                    Role = adminRole,
+                    User = adminUser
+                });
 
-                // ... activated
-                var lockoutResult = await userMgr.SetLockoutEnabledAsync(adminUser, false);
-
-                // ... and with full privileges
-                var addRoleResult = await userMgr.AddToRoleAsync(adminUser, "admin");
+                await SaveChangesAsync();
             }
         }
     }

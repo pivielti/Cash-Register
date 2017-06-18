@@ -16,7 +16,7 @@ namespace CashRegister.Web.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthenticationService _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpContext _httpContext;
         private readonly ILogger _logger;
 
         public AuthController(
@@ -25,20 +25,20 @@ namespace CashRegister.Web.Controllers
             ILoggerFactory loggerFactory)
         {
             _authService = authService;
-            _httpContextAccessor = httpContextAccessor;
+            _httpContext = httpContextAccessor.HttpContext;
             _logger = loggerFactory.CreateLogger<AuthController>();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginRequest model)
+        public IActionResult Login(LoginModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var loginResult = await _authService.IsIdentityValid(model);
-            if (!loginResult.Item1)
+            var isValid = _authService.IsIdentityValid(model);
+            if (!isValid)
             {
                 ModelState.AddModelError("", "Invalid username or password!");
                 return BadRequest(ModelState);
@@ -47,7 +47,7 @@ namespace CashRegister.Web.Controllers
             var token = _authService.CreateToken(model.UserName);
 
             // this allows @websanova/vue-auth to catch and register the token
-            _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", token);
+            _httpContext.Response.Headers.Add("Authorization", token);
 
             return NoContent();
         }
@@ -56,9 +56,9 @@ namespace CashRegister.Web.Controllers
         [Route("refresh")]
         public IActionResult Refresh()
         {
-            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var token = _httpContext.Request.Headers["Authorization"];
             token = _authService.UpdateToken(token);
-            _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", token);
+            _httpContext.Response.Headers.Add("Authorization", token);
             return NoContent();
         }
 
