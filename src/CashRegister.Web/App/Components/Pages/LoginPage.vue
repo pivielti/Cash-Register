@@ -17,8 +17,8 @@
     module.exports = {
         data: function () {
             return {
-                login: "TEST",
-                pswd: "TEST123"
+                login: "administrator",
+                pswd: "password"
             }
         },
         methods: {

@@ -1,8 +1,10 @@
 ﻿<template>
-    <md-table-row :key="category.id">
-        <md-table-cell md-numeric>{{category.id}}</md-table-cell>
-        <md-table-cell>{{category.name}}</md-table-cell>
-        <md-table-cell>{{category.color}}</md-table-cell>
+    <md-table-row>
+        <md-table-cell md-numeric>{{product.id}}</md-table-cell>
+        <md-table-cell>{{product.name}}</md-table-cell>
+        <md-table-cell><span>{{product.price}}</span><md-icon>euro_symbol</md-icon></md-table-cell>
+        <md-table-cell><span>{{product.costPrice}}</span><md-icon>euro_symbol</md-icon></md-table-cell>
+        <md-table-cell>{{product.category.name}}</md-table-cell>
         <md-table-cell>
             <md-menu md-direction="bottom left">
                 <md-button class="md-icon-button" md-menu-trigger>
@@ -23,14 +25,14 @@
 
 <script>
     module.exports = {
-        props: ["category"],
-        data: function () {
+        props: ["product"],
+        data() {
             return {
-            }   
+            }
         },
         methods: {
             deleteItem() {
-                this.$emit('delete')
+                this.$emit('delete');
             }
         },
         components: {

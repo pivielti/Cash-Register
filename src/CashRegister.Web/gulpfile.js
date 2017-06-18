@@ -12,6 +12,6 @@ gulp.task("webpack", function (callback) {
     });
 });
 
-gulp.task('default', function () {
+gulp.task('default', ["webpack"], function () {
     gulp.watch('./App/**/*', ['webpack']);
 });
