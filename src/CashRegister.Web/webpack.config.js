@@ -62,6 +62,7 @@ module.exports = {
             publicPath: STYLES_PUBLIC_PATH,
             disable: false,
             allChunks: true
-        }),
-    ]
+        })
+    ],
+    devtool: "source-map"
 };

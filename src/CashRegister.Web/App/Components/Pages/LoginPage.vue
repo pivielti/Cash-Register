@@ -9,7 +9,7 @@
             <label>Password</label>
             <md-input type="password" required v-model="pswd"></md-input>
         </md-input-container>
-        <button class="md-raised md-primary">Login</button>
+        <md-button type="submit" class="md-raised md-primary margin-left-0">Login</md-button>
     </form>
 </template>
 
@@ -29,7 +29,6 @@
                 this.$auth.login({
                     body: formDatas,
                     success: function () {
-                        console.log('login success');
                     },
                     error: function () {
                         console.log('login error');

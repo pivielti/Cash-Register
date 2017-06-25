@@ -8,12 +8,14 @@ import AuthBearer from '@websanova/vue-auth/drivers/auth/bearer.js';
 import AuthResource from '@websanova/vue-auth/drivers/http/vue-resource.1.x.js';
 import AuthRouter from '@websanova/vue-auth/drivers/router/vue-router.2.x.js';
 import VueMaterial from 'vue-material';
+import VeeValidate from 'vee-validate';
 
 // register plugins
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(Vuex);
 Vue.use(VueMaterial);
+Vue.use(VeeValidate);
 
 // configure routes
 import { routes } from './routes';

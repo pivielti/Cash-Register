@@ -10,7 +10,7 @@ namespace CashRegister.Web.Models.DbContext
         public string Name { get; set; }
 
         [Required]
-        [RegularExpression("/^#?([a-f0-9]{6}|[a-f0-9]{3})$/")]
+        [RegularExpression("#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})")]
         public string Color { get; set; }
     }
 }

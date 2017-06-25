@@ -17,6 +17,7 @@
 
 <script>
     import 'vue-material/dist/vue-material.css';
+    import '../Assets/Css/site.scss';
     import MainMenu from './Menus/MainMenu.vue';
 
     module.exports = {

@@ -3,8 +3,8 @@
         <md-table-card>
             <md-toolbar>
                 <h1 class="md-title">Products</h1>
-                <md-button class="md-icon-button" @click.native="fetchDatas">
-                    <md-icon>refresh</md-icon>
+                <md-button class="md-icon-button md-raised">
+                    <md-icon>add</md-icon>
                 </md-button>
             </md-toolbar>
             <md-table>
@@ -23,10 +23,11 @@
                 </md-table-body>
             </md-table>
         </md-table-card>
-        <md-dialog-confirm md-title="Confirmation"
-                           md-content-html="Voulez-vous vraiment supprimer cet élément ?"
-                           md-ok-text="Oui"
-                           md-cancel-text="Non"
+        <!-- Dialogs -->
+        <md-dialog-confirm md-title="Confirm"
+                           md-content-html="Do you really want to delete this item ?"
+                           md-ok-text="Yes"
+                           md-cancel-text="No"
                            ref="deleteDialog">
         </md-dialog-confirm>
     </div>

@@ -54,12 +54,18 @@
         },
         data: function () {
             return {
-                opened: false
+                //opened: false
             }
         },
         methods: {
             toggleLeftSidenav() {
                 this.$refs.leftSidenav.toggle();
+            }
+        },
+        watch: {
+            $route() {
+                if (this.$refs.leftSidenav.mdVisible)
+                    this.$refs.leftSidenav.close();
             }
         }
     }
