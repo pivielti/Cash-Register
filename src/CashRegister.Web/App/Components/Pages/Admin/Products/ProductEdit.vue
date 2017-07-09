@@ -2,15 +2,15 @@
     <div>
         <h1>{{title}}</h1>
         <form novalidate>
-            <md-input-container v-bind:class="{'md-input-invalid': errors.has('category')}">
+            <md-input-container v-bind:class="{'md-input-invalid': errors.has('name')}">
                 <label>Name</label>
-                <md-input v-model="category.name" placeholder="Red" v-validate="{rules: {required: true}}" data-vv-name="category"></md-input>
-                <span v-show="errors.has('category')" class="md-error">{{ errors.first('category') }}</span>
+                <md-input v-model="product.name" v-validate="{ rules: { required: true } }" data-vv-name="name"></md-input>
+                <span v-show="errors.has('name')" class="md-error">{{ errors.first('name') }}</span>
             </md-input-container>
-            <md-input-container v-bind:class="{'md-input-invalid': errors.has('color')}" :style="{ color: category.color }">
-                <label>Color</label>
-                <md-input v-model="category.color" v-validate="{ rules: { required: true, regex: /#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/} }" placeholder="#FF0000" data-vv-name="color"></md-input>
-                <span v-show="errors.has('color')" class="md-error">{{ errors.first('color') }}</span>
+            <md-input-container v-bind:class="{'md-input-invalid': errors.has('selling-price')}">
+                <label>Selling price</label>
+                <md-input v-model="product.price" v-validate="{ rules: {  required: true, decimals: 2 } }" data-vv-name="selling-price"></md-input>
+                <span v-show="errors.has('selling-price')" class="md-error">{{ errors.first('selling-price') }}</span>
             </md-input-container>
             <md-button class="md-raised md-primary margin-left-0" @click.native.prevent="save()">Save</md-button>
             <md-button class="md-primary" @click.native.prevent="cancel()">Cancel</md-button>
@@ -26,16 +26,16 @@
         },
         data() {
             return {
-                category: {}
+                product: {}
             }
         },
         computed: {
             title() {
                 switch (this.$route.meta.mode) {
                     case "CREATE":
-                        return "Create a category";
+                        return "Create a product";
                     case "EDIT":
-                        return "Edit a category";
+                        return "Edit a product";
                     default:
                         return "ERROR: You should set an edit mode!";
                 }
@@ -48,9 +48,9 @@
 
                 this.$store.commit('startLoading');
 
-                this.$http.get("/api/categories/" + this.id)
+                this.$http.get("/api/products/" + this.id)
                     .then(response => {
-                        this.category = response.body;
+                        this.product = response.body;
                     }, response => {
                         console.log(response);
                     }).then(() => {
@@ -65,12 +65,12 @@
                     this.$store.commit('startLoading');
 
                     if (this.$route.meta.mode == 'CREATE') {
-                        this.$http.post("/api/categories", this.category)
+                        this.$http.post("/api/products", this.product)
                             .then(response => { this.saveSuccess(response); }, response => { this.saveError(response); })
                             .then(() => { this.stopLoading(); });
                     }
                     if (this.$route.meta.mode == 'EDIT') {
-                        this.$http.put("/api/categories/" + this.category.id, this.category)
+                        this.$http.put("/api/products/" + this.category.id, this.product)
                             .then(response => { this.saveSuccess(response); }, response => { this.saveError(response); })
                             .then(() => { this.stopLoading(); });
                     }
@@ -79,10 +79,10 @@
                 });
             },
             cancel() {
-                this.$router.push({ name: 'categories-admin' });
+                this.$router.push({ name: 'products-admin' });
             },
             saveSuccess(response) {
-                this.$router.push({ name: 'categories-admin' });
+                this.$router.push({ name: 'products-admin' });
             },
             saveError(response) {
                 console.log(response.body);

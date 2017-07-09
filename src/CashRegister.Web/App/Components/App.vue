@@ -3,10 +3,11 @@
         <md-layout md-row>
             <md-layout md-column>
                 <main-menu site-title="Cash Register"></main-menu>
+                <md-progress md-indeterminate v-if="$store.state.loading" class=""></md-progress>
             </md-layout>
         </md-layout>
-        <md-layout md-align="center" md-align-small="start">
-            <md-layout md-flex="80" md-flex-small="100">
+        <md-layout md-align="center" md-align-small="center">
+            <md-layout md-flex="80" md-flex-small="90">
                 <transition name="fade">
                     <router-view></router-view>
                 </transition>

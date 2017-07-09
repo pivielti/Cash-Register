@@ -23,17 +23,6 @@
 
 <script>
     module.exports = {
-        props: ["category"],
-        data: function () {
-            return {
-            }   
-        },
-        methods: {
-        },
-        components: {
-        }
+        props: ["category"]
     }
 </script>
-
-<style lang="scss" scoped>
-</style>

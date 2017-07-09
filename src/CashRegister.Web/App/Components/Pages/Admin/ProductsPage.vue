@@ -3,7 +3,7 @@
         <md-table-card>
             <md-toolbar>
                 <h1 class="md-title">Products</h1>
-                <md-button class="md-icon-button md-raised">
+                <md-button class="md-icon-button md-raised" @click.native="gotoCreatePage">
                     <md-icon>add</md-icon>
                 </md-button>
             </md-toolbar>
@@ -12,7 +12,7 @@
                     <md-table-row>
                         <md-table-head md-numeric>Id</md-table-head>
                         <md-table-head>Name</md-table-head>
-                        <md-table-head>Price</md-table-head>
+                        <md-table-head>Selling Price</md-table-head>
                         <md-table-head>Cost Price</md-table-head>
                         <md-table-head>Category</md-table-head>
                         <md-table-head></md-table-head>
@@ -23,11 +23,12 @@
                 </md-table-body>
             </md-table>
         </md-table-card>
-        <!-- Dialogs -->
-        <md-dialog-confirm md-title="Confirm"
-                           md-content-html="Do you really want to delete this item ?"
-                           md-ok-text="Yes"
-                           md-cancel-text="No"
+        <!-- Delete Dialog -->
+        <md-dialog-confirm md-title="Confirmation"
+                           md-content-html="Voulez-vous vraiment supprimer cet élément ?"
+                           md-ok-text="Oui"
+                           md-cancel-text="Non"
+                           @close="deleteDialogClosed"
                            ref="deleteDialog">
         </md-dialog-confirm>
     </div>
@@ -38,7 +39,8 @@
     module.exports = {
         data() {
             return {
-                products: []
+                products: [],
+                selectedProduct: null
             }
         },
         created() {
@@ -46,16 +48,35 @@
         },
         methods: {
             fetchDatas() {
+                this.$store.commit('startLoading');
                 this.$http.get('/api/products').then(response => {
                     this.products = response.body;
                 }, response => {
-                    // error callback
+                    console.log(response.body);
+                }).then(() => {
+                    this.$store.commit('stopLoading');
                 });
             },
-            addCategory() {
+            gotoCreatePage() {
+                this.$router.push({ name: 'products-admin-create', })
             },
-            deleteCategory() {
+            gotoEditPage(product) {
+                this.$router.push({ name: 'products-admin-edit', params: { id: product.id } });
+            },
+            openDeleteDialog(product) {
+                this.selectedProduct = product;
                 this.$refs["deleteDialog"].open();
+            },
+            deleteDialogClosed(state) {
+                if (state == "cancel")
+                    return;
+
+                this.$http.delete('/api/products/' + this.selectedProduct.id).then(response => {
+                    var index = this.products.indexOf(this.selectedProduct);
+                    this.products.splice(index, 1);
+                }, response => {
+                    console.log(response.body);
+                });
             }
         },
         components: {

@@ -4,7 +4,7 @@
         <md-table-card>
             <md-toolbar>
                 <h1 class="md-title">Categories</h1>
-                <md-button class="md-icon-button md-raised" @click.native="openEditModalForCreation">
+                <md-button class="md-icon-button md-raised" @click.native="gotoCreatePage">
                     <md-icon>add</md-icon>
                 </md-button>
             </md-toolbar>
@@ -18,7 +18,7 @@
                     </md-table-row>
                 </md-table-header>
                 <md-table-body>
-                    <category-table-row v-for="category in orderedCategories" :category="category" :key="category.id" @delete="openDeleteDialog(category)" @edit="openEditModalForEdition(category)"></category-table-row>
+                    <category-table-row v-for="category in orderedCategories" :category="category" :key="category.id" @delete="openDeleteDialog(category)" @edit="gotoEditPage(category)"></category-table-row>
                 </md-table-body>
             </md-table>
         </md-table-card>
@@ -30,19 +30,14 @@
                            @close="deleteDialogClosed"
                            ref="deleteDialog">
         </md-dialog-confirm>
-        <!-- Create/Edit Dialog -->
-        <category-edit :edit-mode="editMode" :category-to-edit="selectedCategory" :open="openEditDialog" @closed="editDialogClosed"></category-edit>
     </div>
 </template>
 
 <script>
     import CategoryTableRow from './Categories/CategoryTableRow.vue';
-    import CategoryEdit from './Categories/CategoryEdit.vue'
     module.exports = {
         data() {
             return {
-                editMode: null,
-                openEditDialog: false,
                 selectedCategory: {},
                 categories: []
             }
@@ -59,32 +54,21 @@
         },
         methods: {
             fetchDatas() {
+                this.$store.commit('startLoading');
                 this.$http.get('/api/categories').then(response => {
-                    console.log(response.body);
                     this.categories = response.body;
                 }, response => {
+                    console.log(response.body);
                     // error callback
+                }).then(() => {
+                    this.$store.commit('stopLoading');
                 });
             },
-            openEditModalForCreation() {
-                this.editMode = "CREATE";
-                this.selectedCategory = {};
-                this.openEditDialog = true;
+            gotoCreatePage() {
+                this.$router.push({ name: 'categories-admin-create', })
             },
-            openEditModalForEdition(category) {
-                this.editMode = "EDIT";
-                this.selectedCategory = category;
-                this.openEditDialog = true;
-            },
-            editDialogClosed(status, category) {
-                if (status == "CANCEL") {
-                    console.log("canceled");
-                }
-                else if (status == "SAVE") {
-                    console.log("saved");
-                    this.categories.push(category);
-                }
-                this.openEditDialog = false;
+            gotoEditPage(category) {
+                this.$router.push({ name: 'categories-admin-edit', params: { id: category.id } });
             },
             openDeleteDialog(category) {
                 this.selectedCategory = category;
@@ -103,11 +87,7 @@
             }
         },
         components: {
-            CategoryTableRow: CategoryTableRow,
-            CategoryEdit: CategoryEdit
+            CategoryTableRow: CategoryTableRow
         }
     }
 </script>
-
-<style lang="scss" scoped>
-</style>
