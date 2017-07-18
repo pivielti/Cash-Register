@@ -65,7 +65,7 @@
                     this.$store.commit('startLoading');
 
                     if (this.$route.meta.mode == 'CREATE') {
-                        this.$http.post("/api/categories", this.category)
+                        this.$http.post("/api/categories/", this.category)
                             .then(response => { this.saveSuccess(response); }, response => { this.saveError(response); })
                             .then(() => { this.stopLoading(); });
                     }

@@ -9,7 +9,10 @@ Vue.use(Vuex);
 var store = new Vuex.Store({
     state: {
         loading: false,
-        error: ""
+        snackbar: {
+            level: "ERROR",
+            message: ""
+        },
     },
     getters: getters,
     actions: actions,

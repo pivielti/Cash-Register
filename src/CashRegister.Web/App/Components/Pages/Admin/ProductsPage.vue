@@ -12,14 +12,14 @@
                     <md-table-row>
                         <md-table-head md-numeric>Id</md-table-head>
                         <md-table-head>Name</md-table-head>
-                        <md-table-head>Selling Price</md-table-head>
-                        <md-table-head>Cost Price</md-table-head>
+                        <md-table-head>Selling Price (€)</md-table-head>
+                        <md-table-head>Cost Price (€)</md-table-head>
                         <md-table-head>Category</md-table-head>
                         <md-table-head></md-table-head>
                     </md-table-row>
                 </md-table-header>
                 <md-table-body>
-                    <product-table-row v-for="product in products" :product="product" :key="product.id" @delete="deleteProduct"></product-table-row>
+                    <product-table-row v-for="product in products" :product="product" :key="product.id" @delete="openDeleteDialog(product)" @edit="gotoEditPage(product)"></product-table-row>
                 </md-table-body>
             </md-table>
         </md-table-card>

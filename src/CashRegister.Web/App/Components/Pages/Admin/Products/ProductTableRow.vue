@@ -2,8 +2,8 @@
     <md-table-row>
         <md-table-cell md-numeric>{{product.id}}</md-table-cell>
         <md-table-cell>{{product.name}}</md-table-cell>
-        <md-table-cell><span>{{product.price}}</span><md-icon>euro_symbol</md-icon></md-table-cell>
-        <md-table-cell><span>{{product.costPrice}}</span><md-icon>euro_symbol</md-icon></md-table-cell>
+        <md-table-cell><span>{{product.price}}</span></md-table-cell>
+        <md-table-cell><span>{{product.costPrice}}</span></md-table-cell>
         <md-table-cell>{{product.category.name}}</md-table-cell>
         <md-table-cell>
             <md-menu md-direction="bottom left">
@@ -11,10 +11,10 @@
                     <md-icon>more_horiz</md-icon>
                 </md-button>
                 <md-menu-content>
-                    <md-menu-item>
+                    <md-menu-item @click.native="$emit('edit')">
                         <span>Edit</span><md-icon>edit</md-icon>
                     </md-menu-item>
-                    <md-menu-item @click.native="deleteItem">
+                    <md-menu-item @click.native="$emit('delete')">
                         <span>Delete</span><md-icon>delete</md-icon>
                     </md-menu-item>
                 </md-menu-content>
@@ -25,20 +25,6 @@
 
 <script>
     module.exports = {
-        props: ["product"],
-        data() {
-            return {
-            }
-        },
-        methods: {
-            deleteItem() {
-                this.$emit('delete');
-            }
-        },
-        components: {
-        }
+        props: ["product"]
     }
 </script>
-
-<style lang="scss" scoped>
-</style>

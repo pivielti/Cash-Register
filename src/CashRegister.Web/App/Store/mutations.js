@@ -4,5 +4,8 @@
     },
     stopLoading(state) {
         state.loading = false;
+    },
+    alert(state, params) {
+        state.snackbar = params;
     }
 };
